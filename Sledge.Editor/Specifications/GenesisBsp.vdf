@@ -1,0 +1,52 @@
+// Genesis Compile Specification
+
+Specification
+{
+	ID "GenesisBSP"
+	Name "Genesis MAP to BSP compiler tools"
+
+	Tool
+	{
+		Name "bsp"
+		Description "Bsp Compiler"
+		Order "1"
+        Enabled "True"
+
+        Parameter
+		{
+			Name "TXL File"
+			Flag "-txl"
+			Description "Specify the path to the TXL file to use."
+			Type "File"
+			Filter "TXL Files |*.txl"
+		}
+
+		Parameter
+		{
+			Name "Header Path"
+			Flag "-header"
+			Description "Specify the header path for the entities."
+			Type "Folder"
+		}
+
+		Parameter
+		{
+			Name "Minimal Light Level"
+			Flag "-minLight"
+			Description "Specify the light level"
+			Type "String"
+			Value "128.00 128.00 128.00"
+		}
+
+		Parameter
+		{
+			Name "Light Scale"
+			Flag "-lscale"
+			Description "Specify the light scale"
+			Type "Decimal"
+			Value "1.0"
+			Min "0"
+			Max "1"
+		}
+	}
+}
