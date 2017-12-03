@@ -10,6 +10,7 @@ using Sledge.Editor.Documents;
 using Sledge.Providers.Map;
 using Sledge.Settings.Models;
 using Path = System.IO.Path;
+using System;
 
 namespace Sledge.Editor.Compiling
 {
@@ -43,7 +44,7 @@ namespace Sledge.Editor.Compiling
             }
 
             if (!Directory.Exists(workingDir)) Directory.CreateDirectory(workingDir);
-            TargetFile = SaveCordonMap(document, workingDir);
+            TargetFile = SaveWorkingMap(document, workingDir);
             OriginalFile = document.MapFile;
 
             var fileFlag = '"' + TargetFile + '"';
@@ -205,6 +206,19 @@ namespace Sledge.Editor.Compiling
             // Editor subscribes to these messages and calls Complete() on the correct thread.
         }
 
+        private string SaveWorkingMap(Document document, string folder)
+        {
+            switch (document.Game.Engine)
+            {
+                case Engine.Goldsource:
+                    return SaveCordonMap(document, folder);
+                case Engine.Genesis:
+                    return SaveGenesisMap(document, folder);
+            }
+
+            return null;
+        }
+
         private string SaveCordonMap(Document document, string folder)
         {
             var filename = Path.ChangeExtension(document.MapFileName, ".map");
@@ -225,8 +239,8 @@ namespace Sledge.Editor.Compiling
 
                 var brush = new Brushes.BlockBrush();
 
-                var cordon = (Solid) brush.Create(map.IDGenerator, outside, null, 0).First();
-                var carver = (Solid) brush.Create(map.IDGenerator, inside, null, 0).First();
+                var cordon = (Solid)brush.Create(map.IDGenerator, outside, null, 0).First();
+                var carver = (Solid)brush.Create(map.IDGenerator, inside, null, 0).First();
                 cordon.Faces.ForEach(x => x.Texture.Name = "BLACK");
 
                 // Do a carve (TODO: move carve into helper method?)
@@ -246,6 +260,13 @@ namespace Sledge.Editor.Compiling
             map.WorldSpawn.EntityData.SetPropertyValue("wad", string.Join(";", document.GetUsedTexturePackages().Select(x => x.PackageRoot).Where(x => x.EndsWith(".wad"))));
             filename = Path.Combine(folder, filename);
             MapProvider.SaveMapToFile(filename, map);
+            return filename;
+        }
+
+        private string SaveGenesisMap(Document document, string folder)
+        {
+            var filename = Path.Combine(folder, document.MapFileName);
+            MapProvider.SaveMapToFile(filename,document.Map);
             return filename;
         }
     }

@@ -19,6 +19,7 @@ namespace Sledge.DataStructures.MapObjects
         public World WorldSpawn { get; set; }
         public IDGenerator IDGenerator { get; private set; }
 
+        public List<Motion> Motions { get; set; }
         public bool Show2DGrid { get; set; }
         public bool Show3DGrid { get; set; }
         public bool SnapToGrid { get; set; }

@@ -393,7 +393,7 @@ namespace Sledge.Editor.UI.ObjectProperties
         private void PopulateFlags(string className, List<int> flags)
         {
             FlagsTable.Items.Clear();
-            var cls = Document.GameData.Classes.FirstOrDefault(x => x.Name == className);
+            var cls = Document.GameData.Classes.FirstOrDefault(x => x.Name.ToLower() == className);
             if (cls == null) return;
             var flagsProp = cls.Properties.FirstOrDefault(x => x.Name == "spawnflags");
             if (flagsProp == null) return;

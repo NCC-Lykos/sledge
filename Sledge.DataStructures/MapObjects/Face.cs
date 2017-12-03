@@ -9,6 +9,23 @@ using Sledge.Extensions;
 
 namespace Sledge.DataStructures.MapObjects
 {
+    [Flags]
+    public enum FaceFlags
+    {
+        Mirror = (1 << 0),
+        FullBright = (1 << 1),
+        Sky = (1 << 2),
+        Light = (1 << 3),
+        Selected = (1 << 4),
+        FixedHull = (1 << 5),
+        Gouraud = (1 << 6),
+        Flat = (1 << 7),
+        TextureLocked = (1 << 8),
+        Visible = (1 << 9),
+        Sheet = (1 << 10),
+        Transparent = (1 << 11),
+    }
+
     [Serializable]
     public class Face : ISerializable
     {
@@ -19,6 +36,8 @@ namespace Sledge.DataStructures.MapObjects
         public bool IsSelected { get; set; }
         public bool IsHidden { get; set; }
         public float Opacity { get; set; }
+        public FaceFlags Flags { get; set; }
+        public Coordinate LightScale { get; set; }
 
         public TextureReference Texture { get; set; }
         public List<Vertex> Vertices { get; set; }
@@ -39,6 +58,7 @@ namespace Sledge.DataStructures.MapObjects
         protected Face(SerializationInfo info, StreamingContext context)
         {
             ID = info.GetInt64("ID");
+            Flags = (FaceFlags)info.GetInt32("Flags");
             Colour = Color.FromArgb(info.GetInt32("Colour"));
             Plane = (Plane) info.GetValue("Plane", typeof (Plane));
             Texture = (TextureReference) info.GetValue("Texture", typeof (TextureReference));
@@ -49,6 +69,7 @@ namespace Sledge.DataStructures.MapObjects
         public virtual void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             info.AddValue("ID", ID);
+            info.AddValue("Flags", Flags);
             info.AddValue("Colour", Colour.ToArgb());
             info.AddValue("Plane", Plane);
             info.AddValue("Texture", Texture);
@@ -59,6 +80,7 @@ namespace Sledge.DataStructures.MapObjects
         {
             var f = new Face(generator.GetNextFaceID())
                         {
+                            Flags = Flags,
                             Plane = Plane.Clone(),
                             Colour = Colour,
                             IsSelected = IsSelected,
@@ -86,6 +108,7 @@ namespace Sledge.DataStructures.MapObjects
         public virtual void Paste(Face f)
         {
             Plane = f.Plane.Clone();
+            Flags = f.Flags;
             Colour = f.Colour;
             IsSelected = f.IsSelected;
             IsHidden = f.IsHidden;

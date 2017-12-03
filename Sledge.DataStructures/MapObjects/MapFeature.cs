@@ -12,6 +12,9 @@ namespace Sledge.DataStructures.MapObjects
         Displacements,
         Instances,
 
+        // Genesis capabilities
+        Motions,
+
         // Editor capabilities
         Colours,
         SingleVisgroups,

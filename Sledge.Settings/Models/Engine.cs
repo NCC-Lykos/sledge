@@ -5,6 +5,6 @@ namespace Sledge.Settings.Models
     public enum Engine
     {
         Goldsource = 1,
-        //Source = 2
+        Genesis = 10,
     }
 }

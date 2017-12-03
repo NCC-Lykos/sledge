@@ -558,7 +558,7 @@ namespace Sledge.Providers
                 tw.Write('"');
                 tw.Write(' ');
                 tw.Write('"');
-                tw.Write(LengthLimit((kv.Value ?? "").Replace('"', '`'), 1024));
+                tw.Write(LengthLimit((kv.Value ?? "").Replace('"', '`'), 4096));
                 tw.Write('"');
                 tw.WriteLine();
             }

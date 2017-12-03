@@ -75,6 +75,11 @@ namespace Sledge.DataStructures.Geometric
             Plane = polygon.Plane.Clone();
         }
 
+        public Plane GetPlane()
+        {
+            return new Plane(Vertices[0], Vertices[1], Vertices[2]);
+        }
+
         /// <summary>
         /// Returns the origin of this polygon.
         /// </summary>

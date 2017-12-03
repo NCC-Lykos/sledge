@@ -194,6 +194,29 @@ namespace Sledge.Editor.Tools.TextureTool
             RecentTexturesList.SelectionChanged += TextureSelectionChanged;
             _freeze = false;
             _currentTextureProperties = new CurrentTextureProperties();
+
+            chkMirror.Tag = FaceFlags.Mirror;
+            chkMirror.CheckedChanged += GbspFlagChanged;
+            chkFullBright.Tag = FaceFlags.FullBright;
+            chkFullBright.CheckedChanged += GbspFlagChanged;
+            chkSky.Tag = FaceFlags.Sky;
+            chkSky.CheckedChanged += GbspFlagChanged;
+            chkLight.Tag = FaceFlags.Light;
+            chkLight.CheckedChanged += GbspFlagChanged;
+            chkFixedHull.Tag = FaceFlags.FixedHull;
+            chkFixedHull.CheckedChanged += GbspFlagChanged;
+            chkGouraud.Tag = FaceFlags.Gouraud;
+            chkGouraud.CheckedChanged += GbspFlagChanged;
+            chkFlat.Tag = FaceFlags.Flat;
+            chkFlat.CheckedChanged += GbspFlagChanged;
+            chkTextureLocked.Tag = FaceFlags.TextureLocked;
+            chkTextureLocked.CheckedChanged += GbspFlagChanged;
+            chkVisible.Tag = FaceFlags.Visible;
+            chkVisible.CheckedChanged += GbspFlagChanged;
+            chkSheet.Tag = FaceFlags.Sheet;
+            chkSheet.CheckedChanged += GbspFlagChanged;
+            chkTransparent.Tag = FaceFlags.Transparent;
+            chkTransparent.CheckedChanged += GbspFlagChanged;
         }
 
         public void Clear()
@@ -354,12 +377,34 @@ namespace Sledge.Editor.Tools.TextureTool
             TextureDetailsLabel.Text = "";
             var textures = new List<TextureItem>();
 
+            if (faces.Count > 1)
+                gbspGroup.Enabled = false;
+            else if (faces.Count > 0)
+            {
+                var face = faces[0];
+
+                chkMirror.Checked = face.Flags.HasFlag(FaceFlags.Mirror);
+                chkFullBright.Checked = face.Flags.HasFlag(FaceFlags.FullBright);
+                chkSky.Checked = face.Flags.HasFlag(FaceFlags.Sky);
+                chkLight.Checked = face.Flags.HasFlag(FaceFlags.Light);
+                chkFixedHull.Checked = face.Flags.HasFlag(FaceFlags.FixedHull);
+                chkGouraud.Checked = face.Flags.HasFlag(FaceFlags.Gouraud);
+                chkFlat.Checked = face.Flags.HasFlag(FaceFlags.Flat);
+                chkTextureLocked.Checked = face.Flags.HasFlag(FaceFlags.TextureLocked);
+                chkVisible.Checked = face.Flags.HasFlag(FaceFlags.Visible);
+                chkSheet.Checked = face.Flags.HasFlag(FaceFlags.Sheet);
+                chkTransparent.Checked = face.Flags.HasFlag(FaceFlags.Transparent);
+
+                gbspGroup.Enabled = true;
+            }
+
             foreach (var face in faces)
             {
                 var tex = face.Texture;
 
                 var name = tex.Texture == null ? tex.Name : tex.Texture.Name;
-                if (textures.Any(x => String.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase))) continue;
+                if (textures.Any(x => String.Equals(x.Name, name, StringComparison.InvariantCultureIgnoreCase)))
+                    continue;
 
                 var item = Document.TextureCollection.GetItem(name) ?? new TextureItem(null, name, TextureFlags.Missing, 64, 64);
                 textures.Add(item);
@@ -393,6 +438,15 @@ namespace Sledge.Editor.Tools.TextureTool
             if (!_currentTextureProperties.DifferentRotationValues) _currentTextureProperties.Rotation = RotationValue.Value;
 
             OnPropertyChanged(_currentTextureProperties);
+        }
+
+        private void GbspFlagChanged(object sender, EventArgs e)
+        {
+            var checkbox = (CheckBox)sender;
+            var flag = (FaceFlags)checkbox.Tag;
+
+            var faces = Document.Selection.GetSelectedFaces().ToList();
+            faces.ForEach((x) => { if (checkbox.Checked) { x.Flags |= flag; } else { x.Flags ^= flag; } });
         }
 
         private void ScaleXValueChanged(object sender, EventArgs e)
