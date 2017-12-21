@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using Sledge.DataStructures.MapObjects;
@@ -112,6 +113,7 @@ namespace Sledge.Providers.Map
                 Parent = parent,
                 Texture = { Name = texSplit[10].Trim('"') },
                 Flags = (FaceFlags)int.Parse(properties["Flags"]),
+                Translucency = float.Parse(properties["Translucency"]),
             };
             face.Vertices.AddRange(poly.Vertices.Select(x => new Vertex(x, face)));
 
@@ -162,7 +164,7 @@ namespace Sledge.Providers.Map
             WriteProperty("Flags", flags, wr, false, 2);
             WriteProperty("Light", "300", wr, false, 2);
             WriteProperty("MipMapBias", "1.000000", wr, false, 2);
-            WriteProperty("Translucency", "255.000000", wr, false, 2);
+            WriteProperty("Translucency", face.Translucency.ToString(), wr, false, 2);
             WriteProperty("Reflectivity", "1.000000", wr, false, 2);
 
             foreach (var vert in face.Vertices)
@@ -248,8 +250,8 @@ namespace Sledge.Providers.Map
             WriteProperty("Pos", FormatCoordinate(face.BoundingBox.Center), wr, false, 1);*/
         }
 
-        private static List<string> SolidProperties = new List<string>{ "Flags", "ModelId", "GroupId", "HullSize", "Type", "BrushFaces" };
-        private Solid ReadSolid(StreamReader rdr, IDGenerator generator)
+        private static List<string> SolidProperties = new List<string>{"Flags", "ModelId", "GroupId", "HullSize", "Type", "BrushFaces" };
+        private Solid ReadSolid(StreamReader rdr, IDGenerator generator, string brushName = "NoName")
         {
             var properties = new Dictionary<string, string>();
 
@@ -262,7 +264,7 @@ namespace Sledge.Providers.Map
 
             var numFaces = int.Parse(properties["BrushFaces"]);
             var faces = new List<Face>(numFaces);
-            var ret = new Solid(generator.GetNextObjectID());
+            var ret = new Solid(generator.GetNextObjectID()) { ClassName = brushName };
             for (int i = 0; i < numFaces; ++i)
             {
                 faces.Add(ReadFace(ret, rdr, generator));
@@ -280,7 +282,7 @@ namespace Sledge.Providers.Map
             ret.UpdateBoundingBox();
 
             //var ret = Solid.CreateFromIntersectingPlanes(faces.Select(x => x.Plane), generator);
-            ret.Colour = Colour.GetRandomBrushColour();
+            ret.Colour = GetGenesisBrushColor(int.Parse(properties["Flags"]));
             ret.MetaData.Set("Flags", properties["Flags"]);
             ret.MetaData.Set("ModelId", properties["ModelId"]);
             ret.MetaData.Set("HullSize", properties["HullSize"]);
@@ -291,6 +293,14 @@ namespace Sledge.Providers.Map
                 ret.Visgroups.Add(group);
 
             return ret;
+        }
+
+        private static System.Drawing.Color GetGenesisBrushColor(int Flags)
+        {
+            //Determine type of brush and color it
+            if (Flags == 72)
+                return Color.FromArgb(255, 186, 85, 211);
+            return Colour.GetRandomBrushColour();
         }
 
         private static void ReadKeyValue(Entity ent, string line)
@@ -374,7 +384,12 @@ namespace Sledge.Providers.Map
             string line;
             while ((line = rdr.ReadLine()).StartsWith("Brush"))
             {
-                var s = ReadSolid(rdr, generator);
+                var match = System.Text.RegularExpressions.Regex.Match(line, "Brush \"(?<BrushName>.*)\"");
+                string brushName = "NoName";
+                if (match.Success)
+                    brushName = match.Groups["BrushName"].Value;
+
+                var s = ReadSolid(rdr, generator, brushName);
                 if (s != null) s.SetParent(ent, false);
             }
 
@@ -387,7 +402,7 @@ namespace Sledge.Providers.Map
             foreach(var solid in solids)
             {
                 int vis = solid.Visgroups[0];
-                var flags = solid.MetaData.Get<string>("flags");
+                var flags = solid.MetaData.Get<string>("Flags");
                 flags = string.IsNullOrWhiteSpace(flags) ? "1" : flags;
 
                 WriteProperty("Brush", solid.ClassName ?? "NoName", wr, true);
