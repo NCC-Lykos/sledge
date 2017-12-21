@@ -459,7 +459,7 @@ namespace Sledge.Providers.Map
             WriteProperty("ePairCount", (entity.EntityData.Properties.Count() + 2).ToString(), wr);
 
             WriteKeyValue("classname", entity.ClassName, wr);
-            WriteKeyValue("Origin", FormatIntCoordinate(entity.Origin), wr);
+            WriteKeyValue(((entity.ClassName == "AmbientSound" || entity.ClassName == "light" || entity.ClassName == "StaticSound" || entity.ClassName == "Corona" || entity.ClassName == "DynamicLight" || entity.ClassName == "directionallight") ? "origin" : "Origin"), FormatIntCoordinate(entity.Origin), wr);
             foreach(var prop in entity.EntityData.Properties)
             {
                 WriteKeyValue(prop.Key, prop.Value, wr);
