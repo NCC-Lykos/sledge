@@ -400,7 +400,7 @@ namespace Sledge.Editor.Tools.TextureTool
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 65F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 207F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 208F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Controls.Add(this.ScaleXValue, 1, 1);
@@ -771,7 +771,8 @@ namespace Sledge.Editor.Tools.TextureTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(417, 420);
+            this.ClientSize = new System.Drawing.Size(417, 517);
+            this.Controls.Add(this.gbspGroup);
             this.Controls.Add(this.HideMaskCheckbox);
             this.Controls.Add(this.RecentTexturesList);
             this.Controls.Add(this.SelectedTexturesList);
@@ -812,6 +813,8 @@ namespace Sledge.Editor.Tools.TextureTool
             ((System.ComponentModel.ISupportInitialize)(this.ShiftXValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ShiftYValue)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LightmapValue)).EndInit();
+            this.gbspGroup.ResumeLayout(false);
+            this.gbspGroup.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
