@@ -114,6 +114,7 @@ namespace Sledge.Providers.Map
                 Texture = { Name = texSplit[10].Trim('"') },
                 Flags = (FaceFlags)int.Parse(properties["Flags"]),
                 Translucency = float.Parse(properties["Translucency"]),
+                Light = int.Parse(properties["Light"]),
             };
             face.Vertices.AddRange(poly.Vertices.Select(x => new Vertex(x, face)));
 
@@ -162,7 +163,7 @@ namespace Sledge.Providers.Map
             var flags = face.Flags == 0 ? "512" : ((int)face.Flags).ToString();
             WriteProperty("NumPoints", face.Vertices.Count().ToString(), wr, false, 2);
             WriteProperty("Flags", flags, wr, false, 2);
-            WriteProperty("Light", "300", wr, false, 2);
+            WriteProperty("Light", face.Light.ToString(), wr, false, 2);
             WriteProperty("MipMapBias", "1.000000", wr, false, 2);
             WriteProperty("Translucency", face.Translucency.ToString(), wr, false, 2);
             WriteProperty("Reflectivity", "1.000000", wr, false, 2);
@@ -459,7 +460,22 @@ namespace Sledge.Providers.Map
             WriteProperty("ePairCount", (entity.EntityData.Properties.Count() + 2).ToString(), wr);
 
             WriteKeyValue("classname", entity.ClassName, wr);
-            WriteKeyValue(((entity.ClassName == "AmbientSound" || entity.ClassName == "light" || entity.ClassName == "StaticSound" || entity.ClassName == "Corona" || entity.ClassName == "DynamicLight" || entity.ClassName == "directionallight") ? "origin" : "Origin"), FormatIntCoordinate(entity.Origin), wr);
+            WriteKeyValue(
+                            (
+                                (
+                                    entity.ClassName == "AmbientSound" || 
+                                    entity.ClassName == "light" || 
+                                    entity.ClassName == "StaticSound" || 
+                                    entity.ClassName == "Corona" || 
+                                    entity.ClassName == "DynamicLight" || 
+                                    entity.ClassName == "directionallight" ||
+                                    entity.ClassName == "spotlight"
+                                ) 
+                                ? "origin" : "Origin"
+                            ), 
+                            FormatIntCoordinate(entity.Origin), 
+                            wr
+                        );
             foreach(var prop in entity.EntityData.Properties)
             {
                 WriteKeyValue(prop.Key, prop.Value, wr);

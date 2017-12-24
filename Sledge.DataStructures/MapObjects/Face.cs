@@ -37,6 +37,7 @@ namespace Sledge.DataStructures.MapObjects
         public bool IsHidden { get; set; }
         public float Opacity { get; set; }
         public float Translucency { get; set; }
+        public int Light { get; set; }
         public FaceFlags Flags { get; set; }
         public Coordinate LightScale { get; set; }
 
