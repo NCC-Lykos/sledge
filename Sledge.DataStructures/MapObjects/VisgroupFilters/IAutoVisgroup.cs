@@ -90,6 +90,16 @@ namespace Sledge.DataStructures.MapObjects.VisgroupFilters
         }
     }
 
+    public class WorldChangeEntitiesVisgroupFilter : IVisgroupFilter
+    {
+        public string Group { get { return "Entities"; } }
+        public string Name { get { return "World Change Entities"; } }
+        public bool IsMatch(MapObject x)
+        {
+            return x is Entity && x.GetEntityData().Name.StartsWith("WorldChange");
+        }
+    }
+
     public class PointEntitiesVisgroupFilter : IVisgroupFilter
     {
         public string Group { get { return "Entities"; } }
@@ -116,7 +126,13 @@ namespace Sledge.DataStructures.MapObjects.VisgroupFilters
         public string Name { get { return "Lights"; } }
         public bool IsMatch(MapObject x)
         {
-            return x is Entity && x.GetEntityData().Name.StartsWith("light");
+            return
+                x is Entity &&
+                (x.GetEntityData().Name.StartsWith("light") ||
+                 x.GetEntityData().Name.StartsWith("Corona") ||
+                 x.GetEntityData().Name.StartsWith("spotlight") ||
+                 x.GetEntityData().Name.StartsWith("DirectionalLight"));
+            
         }
     }
 
